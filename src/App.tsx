@@ -6,6 +6,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import UserManagement from "./pages/UserManagement";
 import ProjectsPage from "./pages/ProjectsPage";
 import ProjectDetailsPage from "./pages/ProjectDetailsPage";
+import AdminTasksPage from "./pages/AdminTasksPage";
 
 const ErrorBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     try {
@@ -26,6 +27,7 @@ const ErrorBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             <Route path="/admin/user-management" element={<UserManagement />} />
             <Route path="/admin/projects" element={<ProjectsPage />} />
             <Route path="/admin/projects/:id" element={<ProjectDetailsPage />} />
+            <Route path="/admin/tasks" element={<AdminTasksPage />} />
           </Routes>
         </ErrorBoundary>
       </Router>
