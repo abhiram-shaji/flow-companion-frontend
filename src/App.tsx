@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import LoginPage from "./pages/LoginPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import UserManagement from "./pages/UserManagement";
 
 const ErrorBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     try {
@@ -20,6 +21,7 @@ const ErrorBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) =>
           <Routes>
             <Route path="/" element={<LoginPage />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/user-management" element={<UserManagement />} />
           </Routes>
         </ErrorBoundary>
       </Router>
