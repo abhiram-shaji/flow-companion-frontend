@@ -28,7 +28,7 @@ const LoginPage: React.FC = () => {
     return (
         <Box display="flex" flexDirection="column" alignItems="center" mt={10}>
             <Typography variant="h4" gutterBottom>
-                Login
+                Flow Companion
             </Typography>
             <TextField
                 label="Email"
