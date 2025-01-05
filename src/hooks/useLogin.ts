@@ -13,22 +13,29 @@ const useLogin = () => {
       navigate("/admin/dashboard");
       return;
     }
-  
+
     try {
-      const response = await axios.post("/api/auth/login", { email, password });
-      const { token, role } = response.data;
-  
-      localStorage.setItem("token", token);
-      if (role === "Admin") {
-        navigate("/admin/dashboard");
-      } else if (role === "Worker") {
-        navigate("/worker/dashboard");
-      }
+      const response = await axios.post("https://flow-companion-backend.onrender.com/api/users/login", {
+        email,
+        password,
+      });
+
+      const { message, userId } = response.data;
+
+      // Persist the logged-in user ID for use in other pages
+      localStorage.setItem("userId", userId);
+
+      // Navigate to the worker dashboard
+      navigate("/worker/dashboard");
     } catch (err) {
-      setError("Invalid email or password.");
+      if (axios.isAxiosError(err) && err.response?.data?.error) {
+        setError(err.response.data.error); // Use the error message from the backend
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
     }
   };
-  
+
   return {
     email,
     setEmail,

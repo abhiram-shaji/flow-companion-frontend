@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, TextField, Typography, Box } from "@mui/material";
-import useLogin from "../hooks/useLogin"; // Adjust the path as per your file structure.
+import useLogin from "../hooks/useLogin";
 
 const LoginPage: React.FC = () => {
   const { email, setEmail, password, setPassword, error, handleLogin } = useLogin();
@@ -8,7 +8,7 @@ const LoginPage: React.FC = () => {
   return (
     <Box display="flex" flexDirection="column" alignItems="center" mt={10}>
       <Typography variant="h4" gutterBottom>
-        Flow Companion
+        Flow Companion by Abhiram Shaji
       </Typography>
       <TextField
         label="Email"
