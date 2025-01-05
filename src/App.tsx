@@ -11,6 +11,7 @@ import AdminBudgetsPage from "./pages/AdminBudgetsPage";
 import AdminEstimatesPage from "./pages/AdminEstimatesPage";
 
 import WorkerDashboardPage from "./pages/WorkerDashboardPage";
+import WorkerTasksPage from "./pages/WorkerTasksPage";
 
 const ErrorBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     try {
@@ -37,6 +38,7 @@ const ErrorBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             <Route path="/admin/estimates" element={<AdminEstimatesPage />} />
 
             <Route path="/worker/dashboard" element={<WorkerDashboardPage />} />
+            <Route path="/worker/tasks" element={<WorkerTasksPage />} />
           </Routes>
         </ErrorBoundary>
       </Router>
