@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Typography,
@@ -12,40 +12,19 @@ import {
   FormControl,
   TextField,
 } from "@mui/material";
-
-interface Task {
-  id: number;
-  name: string;
-  dueDate: string;
-  status: string;
-}
+import { useManageTasks } from "../hooks/useManageTasks";
 
 const WorkerTasksPage: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: 1, name: "Task A", dueDate: "2023-12-01", status: "In Progress" },
-    { id: 2, name: "Task B", dueDate: "2023-12-15", status: "Pending" },
-    { id: 3, name: "Task C", dueDate: "2023-12-20", status: "Completed" },
-  ]);
-
-  const [statusFilter, setStatusFilter] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-
-  const handleMarkCompleted = (id: number) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === id ? { ...task, status: "Completed" } : task
-      )
-    );
-  };
-
-  const filteredTasks = tasks.filter((task) => {
-    const matchesStatus = statusFilter ? task.status === statusFilter : true;
-    const matchesDateRange =
-      (!startDate || new Date(task.dueDate) >= new Date(startDate)) &&
-      (!endDate || new Date(task.dueDate) <= new Date(endDate));
-    return matchesStatus && matchesDateRange;
-  });
+  const {
+    tasks,
+    handleMarkCompleted,
+    statusFilter,
+    setStatusFilter,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+  } = useManageTasks();
 
   return (
     <Box sx={{ padding: 3 }}>
@@ -95,7 +74,7 @@ const WorkerTasksPage: React.FC = () => {
 
       {/* Task List */}
       <Grid container spacing={2}>
-        {filteredTasks.map((task) => (
+        {tasks.map((task) => (
           <Grid item xs={12} sm={6} md={4} key={task.id}>
             <Card>
               <CardContent>
