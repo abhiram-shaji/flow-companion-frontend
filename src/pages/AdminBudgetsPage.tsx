@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Typography,
@@ -17,100 +17,19 @@ import {
   TextField,
 } from "@mui/material";
 import { Pie } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from "chart.js";
-
-ChartJS.register(ArcElement, Tooltip, Legend);
+import { useManageBudgets } from "../hooks/useManageBudgets";
+import { useChartData } from "../hooks/useChartData";
+import { useBudgetDialog } from "../hooks/useBudgetDialog";
 
 const AdminBudgetsPage: React.FC = () => {
-  const [budgets, setBudgets] = useState([
-    {
-      id: 1,
-      projectName: "Project A",
-      totalBudget: 10000,
-      currentSpending: 6000,
-      notes: "Initial phase completed",
-    },
-    {
-      id: 2,
-      projectName: "Project B",
-      totalBudget: 20000,
-      currentSpending: 12000,
-      notes: "Testing in progress",
-    },
-  ]);
-
-  const [open, setOpen] = useState(false);
-  const [budgetData, setBudgetData] = useState({
-    id: 0,
-    projectName: "",
-    totalBudget: "",
-    currentSpending: "",
-    notes: "",
-  });
-
-  const handleOpen = (budget?: typeof budgetData) => {
-    setBudgetData(
-      budget || {
-        id: 0,
-        projectName: "",
-        totalBudget: "",
-        currentSpending: "",
-        notes: "",
-      }
-    );
-    setOpen(true);
-  };
-
-  const handleClose = () => setOpen(false);
+  const { budgets, addOrUpdateBudget, deleteBudget } = useManageBudgets();
+  const chartData = useChartData(budgets);
+  const { open, budgetData, setBudgetData, openDialog, closeDialog } =
+    useBudgetDialog();
 
   const handleSave = () => {
-    if (budgetData.id === 0) {
-      // Add new budget
-      setBudgets([
-        ...budgets,
-        {
-          ...budgetData,
-          id: budgets.length + 1,
-          totalBudget: Number(budgetData.totalBudget),
-          currentSpending: Number(budgetData.currentSpending),
-        },
-      ]);
-    } else {
-      // Update existing budget
-      setBudgets(
-        budgets.map((budget) =>
-          budget.id === budgetData.id
-            ? {
-                ...budgetData,
-                totalBudget: Number(budgetData.totalBudget),
-                currentSpending: Number(budgetData.currentSpending),
-              }
-            : budget
-        )
-      );
-    }
-    handleClose();
-  };
-
-  const handleDelete = (id: number) => {
-    setBudgets(budgets.filter((budget) => budget.id !== id));
-  };
-
-  const chartData = {
-    labels: budgets.map((b) => b.projectName),
-    datasets: [
-      {
-        label: "Budget Utilization",
-        data: budgets.map((b) => b.currentSpending),
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
-        hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
-      },
-    ],
+    addOrUpdateBudget(budgetData);
+    closeDialog();
   };
 
   return (
@@ -137,12 +56,17 @@ const AdminBudgetsPage: React.FC = () => {
                 <TableCell>{budget.projectName}</TableCell>
                 <TableCell>${budget.totalBudget}</TableCell>
                 <TableCell>${budget.currentSpending}</TableCell>
-                <TableCell>
-                  ${budget.totalBudget - budget.currentSpending}
-                </TableCell>
+                <TableCell>${budget.remainingBudget}</TableCell>
                 <TableCell>
                   <Button
-                    onClick={() => handleOpen({ ...budget, totalBudget: budget.totalBudget.toString(), currentSpending: budget.currentSpending.toString() })}
+                    onClick={() =>
+                      openDialog({
+                        ...budget,
+                        totalBudget: budget.totalBudget.toString(),
+                        currentSpending: budget.currentSpending.toString(),
+                        notes: ""
+                      })
+                    }
                     variant="contained"
                     size="small"
                     sx={{ marginRight: 1 }}
@@ -150,7 +74,7 @@ const AdminBudgetsPage: React.FC = () => {
                     Edit
                   </Button>
                   <Button
-                    onClick={() => handleDelete(budget.id)}
+                    onClick={() => deleteBudget(budget.id)}
                     variant="contained"
                     color="error"
                     size="small"
@@ -166,7 +90,7 @@ const AdminBudgetsPage: React.FC = () => {
 
       {/* Add Budget Button */}
       <Button
-        onClick={() => handleOpen()}
+        onClick={() => openDialog()}
         variant="contained"
         color="primary"
         sx={{ marginTop: 2 }}
@@ -183,7 +107,7 @@ const AdminBudgetsPage: React.FC = () => {
       </Box>
 
       {/* Add/Edit Budget Dialog */}
-      <Dialog open={open} onClose={handleClose} fullWidth>
+      <Dialog open={open} onClose={closeDialog} fullWidth>
         <DialogTitle>
           {budgetData.id === 0 ? "Add Budget" : "Edit Budget"}
         </DialogTitle>
@@ -230,7 +154,7 @@ const AdminBudgetsPage: React.FC = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={closeDialog}>Cancel</Button>
           <Button onClick={handleSave} variant="contained" color="primary">
             Save
           </Button>
