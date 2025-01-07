@@ -1,113 +1,167 @@
 import React from "react";
-import { Box, Typography, Card, CardContent, Grid, Button } from "@mui/material";
-import { useAdminDashboardData } from "../hooks/useAdminDashboardData";
-import { useNavigation } from "../hooks/useNavigation";
+import {
+  Box,
+  Typography,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
+import { Pie } from "react-chartjs-2";
+import { useManageBudgets } from "../hooks/useManageBudgets";
+import { useChartData } from "../hooks/useChartData";
+import { useBudgetDialog } from "../hooks/useBudgetDialog";
 
-const AdminDashboard: React.FC = () => {
-  const { tasks, budgets, estimates } = useAdminDashboardData();
-  const { navigateTo } = useNavigation();
+const AdminBudgetsPage: React.FC = () => {
+  const { budgets, addOrUpdateBudget, deleteBudget } = useManageBudgets();
+  const chartData = useChartData(budgets);
+  const { open, budgetData, setBudgetData, openDialog, closeDialog } =
+    useBudgetDialog();
+
+  const handleSave = () => {
+    addOrUpdateBudget(budgetData);
+    closeDialog();
+  };
 
   return (
     <Box sx={{ padding: 3 }}>
       <Typography variant="h4" gutterBottom>
-        Admin Dashboard
+        Budget Management
       </Typography>
-      <Grid container spacing={3}>
-        {/* Recent Tasks Card */}
-        <Grid item xs={12} sm={6} md={4}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Recent Tasks</Typography>
-              {tasks.map((task) => (
-                <Box key={task.id} sx={{ marginBottom: 1 }}>
-                  <Typography variant="body2">
-                    <strong>Task Name:</strong> {task.name}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Assigned To:</strong> {task.assignedTo}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Status:</strong> {task.status}
-                  </Typography>
-                </Box>
-              ))}
-            </CardContent>
-          </Card>
-        </Grid>
 
-        {/* Budget Overview Card */}
-        <Grid item xs={12} sm={6} md={4}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Budget Overview</Typography>
-              {budgets.map((budget) => (
-                <Box key={budget.id} sx={{ marginBottom: 1 }}>
-                  <Typography variant="body2">
-                    <strong>Project Name:</strong> {budget.projectName}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Total Budget:</strong> ${budget.totalBudget}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Remaining Budget:</strong> ${budget.remainingBudget}
-                  </Typography>
-                </Box>
-              ))}
-            </CardContent>
-          </Card>
-        </Grid>
+      {/* Budget Table */}
+      <TableContainer component={Paper} sx={{ marginTop: 2 }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Project Name</TableCell>
+              <TableCell>Total Budget</TableCell>
+              <TableCell>Current Spending</TableCell>
+              <TableCell>Remaining Budget</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {budgets.map((budget) => (
+              <TableRow key={budget.id}>
+                <TableCell>{budget.projectName}</TableCell>
+                <TableCell>${budget.totalBudget}</TableCell>
+                <TableCell>${budget.currentSpending}</TableCell>
+                <TableCell>${budget.remainingBudget}</TableCell>
+                <TableCell>
+                  <Button
+                    onClick={() =>
+                      openDialog({
+                        ...budget,
+                        totalBudget: budget.totalBudget.toString(),
+                        currentSpending: budget.currentSpending.toString(),
+                        notes: ""
+                      })
+                    }
+                    variant="contained"
+                    size="small"
+                    sx={{ marginRight: 1 }}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    onClick={() => deleteBudget(budget.id)}
+                    variant="contained"
+                    color="error"
+                    size="small"
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-        {/* Estimate Summary Card */}
-        <Grid item xs={12} sm={6} md={4}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Estimate Summary</Typography>
-              {estimates.map((estimate) => (
-                <Box key={estimate.id} sx={{ marginBottom: 1 }}>
-                  <Typography variant="body2">
-                    <strong>Project Name:</strong> {estimate.projectName}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Estimated Cost:</strong> ${estimate.estimatedCost}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Deadline:</strong> {estimate.deadline}
-                  </Typography>
-                </Box>
-              ))}
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+      {/* Add Budget Button */}
+      <Button
+        onClick={() => openDialog()}
+        variant="contained"
+        color="primary"
+        sx={{ marginTop: 2 }}
+      >
+        Add Budget
+      </Button>
 
-      {/* Navigation Links */}
-      <Box sx={{ marginTop: 3 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{ marginRight: 2 }}
-          onClick={() => navigateTo("/manage-tasks")}
-        >
-          Manage Tasks
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          sx={{ marginRight: 2 }}
-          onClick={() => navigateTo("/manage-budgets")}
-        >
-          Manage Budgets
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => navigateTo("/manage-estimates")}
-        >
-          Manage Estimates
-        </Button>
+      {/* Pie Chart */}
+      <Box sx={{ marginTop: 4 }}>
+        <Typography variant="h6" gutterBottom>
+          Budget Utilization Chart
+        </Typography>
+        <Pie data={chartData} />
       </Box>
+
+      {/* Add/Edit Budget Dialog */}
+      <Dialog open={open} onClose={closeDialog} fullWidth>
+        <DialogTitle>
+          {budgetData.id === 0 ? "Add Budget" : "Edit Budget"}
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Project Name"
+            fullWidth
+            value={budgetData.projectName}
+            onChange={(e) =>
+              setBudgetData({ ...budgetData, projectName: e.target.value })
+            }
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField
+            label="Total Budget"
+            type="number"
+            fullWidth
+            value={budgetData.totalBudget}
+            onChange={(e) =>
+              setBudgetData({ ...budgetData, totalBudget: e.target.value })
+            }
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField
+            label="Current Spending"
+            type="number"
+            fullWidth
+            value={budgetData.currentSpending}
+            onChange={(e) =>
+              setBudgetData({
+                ...budgetData,
+                currentSpending: e.target.value,
+              })
+            }
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField
+            label="Notes"
+            fullWidth
+            value={budgetData.notes}
+            onChange={(e) =>
+              setBudgetData({ ...budgetData, notes: e.target.value })
+            }
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeDialog}>Cancel</Button>
+          <Button onClick={handleSave} variant="contained" color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
 
-export default AdminDashboard;
+export default AdminBudgetsPage;
