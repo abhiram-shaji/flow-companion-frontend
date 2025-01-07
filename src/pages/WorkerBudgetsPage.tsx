@@ -1,50 +1,15 @@
 import React from "react";
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  Grid,
-} from "@mui/material";
+import { Box, Typography, Card, CardContent, Grid } from "@mui/material";
 import { Pie } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { useBudgets } from "../hooks/useBudgets";
+import { useChartData } from "../hooks/useChartData";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const WorkerBudgetsPage: React.FC = () => {
-  const budgets = [
-    {
-      id: 1,
-      projectName: "Project A",
-      totalBudget: 10000,
-      currentSpending: 6000,
-      remainingBudget: 4000,
-    },
-    {
-      id: 2,
-      projectName: "Project B",
-      totalBudget: 20000,
-      currentSpending: 12000,
-      remainingBudget: 8000,
-    },
-  ];
-
-  const chartData = {
-    labels: budgets.map((b) => b.projectName),
-    datasets: [
-      {
-        label: "Budget Usage",
-        data: budgets.map((b) => b.currentSpending),
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
-        hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
-      },
-    ],
-  };
+  const budgets = useBudgets();
+  const chartData = useChartData(budgets);
 
   return (
     <Box sx={{ padding: 3 }}>
