@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Typography,
@@ -16,63 +16,20 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
+import { useManageProjects } from "../hooks/useManageProjects";
+import { useProjectDialog } from "../hooks/useProjectDialog";
 
 const ProjectsPage: React.FC = () => {
-  const [projects, setProjects] = useState([
-    {
-      id: 1,
-      name: "Project A",
-      budget: 10000,
-      startDate: "2023-01-01",
-      endDate: "2023-12-31",
-    },
-    {
-      id: 2,
-      name: "Project B",
-      budget: 5000,
-      startDate: "2023-06-01",
-      endDate: "2023-11-30",
-    },
-  ]);
-
-  const [open, setOpen] = useState(false);
-  const [projectData, setProjectData] = useState({
-    id: 0,
-    name: "",
-    budget: "",
-    startDate: "",
-    endDate: "",
-  });
-
-  const handleOpen = (project?: typeof projectData) => {
-    setProjectData(
-      project
-        ? { ...project, budget: project.budget.toString() }
-        : { id: 0, name: "", budget: "", startDate: "", endDate: "" }
-    );
-    setOpen(true);
-  };
-
-  const handleClose = () => setOpen(false);
+  const { projects, addOrUpdateProject, deleteProject } = useManageProjects();
+  const { open, projectData, setProjectData, openDialog, closeDialog } =
+    useProjectDialog();
 
   const handleSave = () => {
-    if (projectData.id === 0) {
-      // Add new project
-      setProjects([
-        ...projects,
-        { ...projectData, id: projects.length + 1, budget: Number(projectData.budget) },
-      ]);
-    } else {
-      // Update existing project
-      setProjects(
-        projects.map((p) => (p.id === projectData.id ? { ...projectData, budget: Number(projectData.budget) } : p))
-      );
-    }
-    handleClose();
-  };
-
-  const handleDelete = (id: number) => {
-    setProjects(projects.filter((project) => project.id !== id));
+    addOrUpdateProject({
+      ...projectData,
+      budget: Number(projectData.budget),
+    });
+    closeDialog();
   };
 
   return (
@@ -102,7 +59,7 @@ const ProjectsPage: React.FC = () => {
                 <TableCell>{project.endDate}</TableCell>
                 <TableCell>
                   <Button
-                    onClick={() => handleOpen({ ...project, budget: project.budget.toString() })}
+                    onClick={() => openDialog({ ...project, budget: project.budget.toString() })}
                     variant="contained"
                     size="small"
                     sx={{ marginRight: 1 }}
@@ -110,7 +67,7 @@ const ProjectsPage: React.FC = () => {
                     Edit
                   </Button>
                   <Button
-                    onClick={() => handleDelete(project.id)}
+                    onClick={() => deleteProject(project.id)}
                     variant="contained"
                     color="error"
                     size="small"
@@ -126,7 +83,7 @@ const ProjectsPage: React.FC = () => {
 
       {/* Add Project Button */}
       <Button
-        onClick={() => handleOpen()}
+        onClick={() => openDialog()}
         variant="contained"
         color="primary"
         sx={{ marginTop: 2 }}
@@ -135,7 +92,7 @@ const ProjectsPage: React.FC = () => {
       </Button>
 
       {/* Dialog for Add/Edit Project */}
-      <Dialog open={open} onClose={handleClose} fullWidth>
+      <Dialog open={open} onClose={closeDialog} fullWidth>
         <DialogTitle>
           {projectData.id === 0 ? "Add Project" : "Edit Project"}
         </DialogTitle>
@@ -182,7 +139,7 @@ const ProjectsPage: React.FC = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={closeDialog}>Cancel</Button>
           <Button onClick={handleSave} variant="contained" color="primary">
             Save
           </Button>
