@@ -1,7 +1,12 @@
 import React from "react";
 import { Box, Typography, Card, CardContent, Grid, Button } from "@mui/material";
+import { useAdminDashboardData } from "../hooks/useAdminDashboardData";
+import { useNavigation } from "../hooks/useNavigation";
 
 const AdminDashboard: React.FC = () => {
+  const { tasks, budgets, estimates } = useAdminDashboardData();
+  const { navigateTo } = useNavigation();
+
   return (
     <Box sx={{ padding: 3 }}>
       <Typography variant="h4" gutterBottom>
@@ -13,9 +18,19 @@ const AdminDashboard: React.FC = () => {
           <Card>
             <CardContent>
               <Typography variant="h6">Recent Tasks</Typography>
-              <Typography variant="body2">Task Name: Design Homepage</Typography>
-              <Typography variant="body2">Assigned To: John Doe</Typography>
-              <Typography variant="body2">Status: In Progress</Typography>
+              {tasks.map((task) => (
+                <Box key={task.id} sx={{ marginBottom: 1 }}>
+                  <Typography variant="body2">
+                    <strong>Task Name:</strong> {task.name}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Assigned To:</strong> {task.assignedTo}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Status:</strong> {task.status}
+                  </Typography>
+                </Box>
+              ))}
             </CardContent>
           </Card>
         </Grid>
@@ -25,9 +40,19 @@ const AdminDashboard: React.FC = () => {
           <Card>
             <CardContent>
               <Typography variant="h6">Budget Overview</Typography>
-              <Typography variant="body2">Project Name: Marketing Campaign</Typography>
-              <Typography variant="body2">Total Budget: $50,000</Typography>
-              <Typography variant="body2">Remaining Budget: $20,000</Typography>
+              {budgets.map((budget) => (
+                <Box key={budget.id} sx={{ marginBottom: 1 }}>
+                  <Typography variant="body2">
+                    <strong>Project Name:</strong> {budget.projectName}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Total Budget:</strong> ${budget.totalBudget}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Remaining Budget:</strong> ${budget.remainingBudget}
+                  </Typography>
+                </Box>
+              ))}
             </CardContent>
           </Card>
         </Grid>
@@ -37,9 +62,19 @@ const AdminDashboard: React.FC = () => {
           <Card>
             <CardContent>
               <Typography variant="h6">Estimate Summary</Typography>
-              <Typography variant="body2">Project Name: App Development</Typography>
-              <Typography variant="body2">Estimated Cost: $10,000</Typography>
-              <Typography variant="body2">Deadline: Dec 31, 2025</Typography>
+              {estimates.map((estimate) => (
+                <Box key={estimate.id} sx={{ marginBottom: 1 }}>
+                  <Typography variant="body2">
+                    <strong>Project Name:</strong> {estimate.projectName}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Estimated Cost:</strong> ${estimate.estimatedCost}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Deadline:</strong> {estimate.deadline}
+                  </Typography>
+                </Box>
+              ))}
             </CardContent>
           </Card>
         </Grid>
@@ -47,13 +82,27 @@ const AdminDashboard: React.FC = () => {
 
       {/* Navigation Links */}
       <Box sx={{ marginTop: 3 }}>
-        <Button variant="contained" color="primary" sx={{ marginRight: 2 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ marginRight: 2 }}
+          onClick={() => navigateTo("/manage-tasks")}
+        >
           Manage Tasks
         </Button>
-        <Button variant="contained" color="secondary" sx={{ marginRight: 2 }}>
+        <Button
+          variant="contained"
+          color="secondary"
+          sx={{ marginRight: 2 }}
+          onClick={() => navigateTo("/manage-budgets")}
+        >
           Manage Budgets
         </Button>
-        <Button variant="contained" color="primary">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigateTo("/manage-estimates")}
+        >
           Manage Estimates
         </Button>
       </Box>
