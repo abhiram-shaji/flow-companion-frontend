@@ -1,47 +1,13 @@
 import React from "react";
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  Grid,
-} from "@mui/material";
+import { Box, Typography, Card, CardContent, Grid } from "@mui/material";
+import { useTasks } from "../hooks/useTasks";
+import { useBudgets } from "../hooks/useBudgets";
+import { useEstimates } from "../hooks/useEstimates";
 
 const WorkerDashboardPage: React.FC = () => {
-  const tasks = [
-    { id: 1, name: "Task A", dueDate: "2023-12-01", status: "In Progress" },
-    { id: 2, name: "Task B", dueDate: "2023-12-15", status: "Pending" },
-  ];
-
-  const budgets = [
-    {
-      id: 1,
-      projectName: "Project A",
-      currentSpending: 6000,
-      remainingBudget: 4000,
-    },
-    {
-      id: 2,
-      projectName: "Project B",
-      currentSpending: 12000,
-      remainingBudget: 8000,
-    },
-  ];
-
-  const estimates = [
-    {
-      id: 1,
-      projectName: "Project A",
-      cost: 15000,
-      deadline: "2023-12-31",
-    },
-    {
-      id: 2,
-      projectName: "Project B",
-      cost: 20000,
-      deadline: "2024-06-30",
-    },
-  ];
+  const tasks = useTasks();
+  const budgets = useBudgets();
+  const estimates = useEstimates();
 
   return (
     <Box sx={{ padding: 3 }}>
