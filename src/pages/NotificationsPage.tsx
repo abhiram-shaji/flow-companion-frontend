@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Typography,
@@ -7,51 +7,11 @@ import {
   Button,
   Grid,
 } from "@mui/material";
-
-interface Notification {
-  id: number;
-  type: string;
-  message: string;
-  timestamp: string;
-  isRead: boolean;
-}
+import { useNotifications } from "../hooks/useNotifications";
 
 const NotificationsPage: React.FC = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: 1,
-      type: "Budget Alert",
-      message: "Project A is nearing its budget limit.",
-      timestamp: "2023-11-20 10:00 AM",
-      isRead: false,
-    },
-    {
-      id: 2,
-      type: "Task Update",
-      message: "Task B has been marked as completed.",
-      timestamp: "2023-11-19 2:30 PM",
-      isRead: true,
-    },
-    {
-      id: 3,
-      type: "Deadline Reminder",
-      message: "Task C is due tomorrow.",
-      timestamp: "2023-11-18 4:00 PM",
-      isRead: false,
-    },
-  ]);
-
-  const handleMarkAsRead = (id: number) => {
-    setNotifications((prevNotifications) =>
-      prevNotifications.map((notification) =>
-        notification.id === id ? { ...notification, isRead: true } : notification
-      )
-    );
-  };
-
-  const handleClearAll = () => {
-    setNotifications([]);
-  };
+  const { notifications, markAsRead, clearAllNotifications } =
+    useNotifications();
 
   return (
     <Box sx={{ padding: 3 }}>
@@ -79,7 +39,7 @@ const NotificationsPage: React.FC = () => {
                 </Typography>
                 {!notification.isRead && (
                   <Button
-                    onClick={() => handleMarkAsRead(notification.id)}
+                    onClick={() => markAsRead(notification.id)}
                     variant="contained"
                     size="small"
                     sx={{ marginTop: 2 }}
@@ -96,7 +56,7 @@ const NotificationsPage: React.FC = () => {
       {/* Clear All Button */}
       {notifications.length > 0 && (
         <Button
-          onClick={handleClearAll}
+          onClick={clearAllNotifications}
           variant="contained"
           color="error"
           sx={{ marginTop: 2 }}
