@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Typography,
@@ -16,72 +16,18 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
+import { useManageEstimates } from "../hooks/useManageEstimates";
+import { useEstimateDialog } from "../hooks/useEstimateDialog";
 
 const AdminEstimatesPage: React.FC = () => {
-  const [estimates, setEstimates] = useState([
-    {
-      id: 1,
-      projectName: "Project A",
-      cost: 15000,
-      deadline: "2023-12-31",
-      description: "Initial project estimate.",
-    },
-    {
-      id: 2,
-      projectName: "Project B",
-      cost: 20000,
-      deadline: "2024-06-30",
-      description: "Extended phase estimate.",
-    },
-  ]);
-
-  const [open, setOpen] = useState(false);
-  const [estimateData, setEstimateData] = useState({
-    id: 0,
-    projectName: "",
-    cost: "",
-    deadline: "",
-    description: "",
-  });
-
-  const handleOpen = (estimate?: typeof estimateData) => {
-    setEstimateData(
-      estimate || { id: 0, projectName: "", cost: "", deadline: "", description: "" }
-    );
-    setOpen(true);
-  };
-
-  const handleClose = () => setOpen(false);
+  const { estimates, addOrUpdateEstimate, deleteEstimate } =
+    useManageEstimates();
+  const { open, estimateData, setEstimateData, openDialog, closeDialog } =
+    useEstimateDialog();
 
   const handleSave = () => {
-    if (estimateData.id === 0) {
-      // Add new estimate
-      setEstimates([
-        ...estimates,
-        {
-          ...estimateData,
-          id: estimates.length + 1,
-          cost: Number(estimateData.cost),
-        },
-      ]);
-    } else {
-      // Update existing estimate
-      setEstimates(
-        estimates.map((estimate) =>
-          estimate.id === estimateData.id
-            ? {
-                ...estimateData,
-                cost: Number(estimateData.cost),
-              }
-            : estimate
-        )
-      );
-    }
-    handleClose();
-  };
-
-  const handleDelete = (id: number) => {
-    setEstimates(estimates.filter((estimate) => estimate.id !== id));
+    addOrUpdateEstimate(estimateData);
+    closeDialog();
   };
 
   return (
@@ -109,7 +55,12 @@ const AdminEstimatesPage: React.FC = () => {
                 <TableCell>{estimate.deadline}</TableCell>
                 <TableCell>
                   <Button
-                    onClick={() => handleOpen({ ...estimate, cost: estimate.cost.toString() })}
+                    onClick={() =>
+                      openDialog({
+                        ...estimate,
+                        cost: estimate.cost.toString(),
+                      })
+                    }
                     variant="contained"
                     size="small"
                     sx={{ marginRight: 1 }}
@@ -117,7 +68,7 @@ const AdminEstimatesPage: React.FC = () => {
                     Edit
                   </Button>
                   <Button
-                    onClick={() => handleDelete(estimate.id)}
+                    onClick={() => deleteEstimate(estimate.id)}
                     variant="contained"
                     color="error"
                     size="small"
@@ -133,7 +84,7 @@ const AdminEstimatesPage: React.FC = () => {
 
       {/* Add Estimate Button */}
       <Button
-        onClick={() => handleOpen()}
+        onClick={() => openDialog()}
         variant="contained"
         color="primary"
         sx={{ marginTop: 2 }}
@@ -142,7 +93,7 @@ const AdminEstimatesPage: React.FC = () => {
       </Button>
 
       {/* Add/Edit Estimate Dialog */}
-      <Dialog open={open} onClose={handleClose} fullWidth>
+      <Dialog open={open} onClose={closeDialog} fullWidth>
         <DialogTitle>
           {estimateData.id === 0 ? "Add Estimate" : "Edit Estimate"}
         </DialogTitle>
@@ -187,7 +138,7 @@ const AdminEstimatesPage: React.FC = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={closeDialog}>Cancel</Button>
           <Button onClick={handleSave} variant="contained" color="primary">
             Save
           </Button>
