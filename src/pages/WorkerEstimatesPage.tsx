@@ -1,27 +1,9 @@
 import React from "react";
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  Grid,
-} from "@mui/material";
+import { Box, Typography, Card, CardContent, Grid } from "@mui/material";
+import { useEstimates } from "../hooks/useEstimates";
 
 const WorkerEstimatesPage: React.FC = () => {
-  const estimates = [
-    {
-      id: 1,
-      projectName: "Project A",
-      estimatedCost: 15000,
-      deadline: "2023-12-31",
-    },
-    {
-      id: 2,
-      projectName: "Project B",
-      estimatedCost: 20000,
-      deadline: "2024-06-30",
-    },
-  ];
+  const estimates = useEstimates();
 
   return (
     <Box sx={{ padding: 3 }}>
@@ -37,7 +19,7 @@ const WorkerEstimatesPage: React.FC = () => {
               <CardContent>
                 <Typography variant="h6">{estimate.projectName}</Typography>
                 <Typography variant="body2">
-                  <strong>Estimated Cost:</strong> ${estimate.estimatedCost}
+                  <strong>Estimated Cost:</strong> ${estimate.cost}
                 </Typography>
                 <Typography variant="body2">
                   <strong>Deadline:</strong> {estimate.deadline}
