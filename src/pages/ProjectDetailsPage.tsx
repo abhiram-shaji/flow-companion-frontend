@@ -18,36 +18,21 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
+import { useProjectDetails } from "../hooks/useProjectDetails";
+import { useDialog } from "../hooks/useDialog";
 
 const ProjectDetailsPage: React.FC = () => {
+  const { project, tasks, estimates, updateProject } = useProjectDetails();
+  const { open, openDialog, closeDialog } = useDialog();
   const [tabValue, setTabValue] = useState(0);
-  const [project, setProject] = useState({
-    id: 1,
-    name: "Project A",
-    budget: 10000,
-    startDate: "2023-01-01",
-    endDate: "2023-12-31",
-  });
-  const [tasks, setTasks] = useState([
-    { id: 1, name: "Task 1", assignedTo: "John Doe", status: "In Progress" },
-    { id: 2, name: "Task 2", assignedTo: "Jane Smith", status: "Completed" },
-  ]);
-  const [estimates, setEstimates] = useState([
-    { id: 1, cost: 5000, deadline: "2023-06-30" },
-    { id: 2, cost: 3000, deadline: "2023-09-15" },
-  ]);
-  const [openEdit, setOpenEdit] = useState(false);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
-  const handleEditOpen = () => setOpenEdit(true);
-  const handleEditClose = () => setOpenEdit(false);
-
-  const handleEditSave = () => {
-    // Update project logic here
-    setOpenEdit(false);
+  const handleSaveProject = (updatedProject: typeof project) => {
+    updateProject(updatedProject);
+    closeDialog();
   };
 
   return (
@@ -82,7 +67,7 @@ const ProjectDetailsPage: React.FC = () => {
             <strong>End Date:</strong> {project.endDate}
           </Typography>
           <Button
-            onClick={handleEditOpen}
+            onClick={openDialog}
             variant="contained"
             color="primary"
             sx={{ marginTop: 2 }}
@@ -153,14 +138,16 @@ const ProjectDetailsPage: React.FC = () => {
       )}
 
       {/* Edit Project Dialog */}
-      <Dialog open={openEdit} onClose={handleEditClose} fullWidth>
+      <Dialog open={open} onClose={closeDialog} fullWidth>
         <DialogTitle>Edit Project</DialogTitle>
         <DialogContent>
           <TextField
             label="Project Name"
             fullWidth
             value={project.name}
-            onChange={(e) => setProject({ ...project, name: e.target.value })}
+            onChange={(e) =>
+              updateProject({ ...project, name: e.target.value })
+            }
             sx={{ marginBottom: 2 }}
           />
           <TextField
@@ -169,7 +156,7 @@ const ProjectDetailsPage: React.FC = () => {
             fullWidth
             value={project.budget}
             onChange={(e) =>
-              setProject({ ...project, budget: Number(e.target.value) })
+              updateProject({ ...project, budget: Number(e.target.value) })
             }
             sx={{ marginBottom: 2 }}
           />
@@ -179,7 +166,7 @@ const ProjectDetailsPage: React.FC = () => {
             fullWidth
             value={project.startDate}
             onChange={(e) =>
-              setProject({ ...project, startDate: e.target.value })
+              updateProject({ ...project, startDate: e.target.value })
             }
             InputLabelProps={{ shrink: true }}
             sx={{ marginBottom: 2 }}
@@ -190,14 +177,18 @@ const ProjectDetailsPage: React.FC = () => {
             fullWidth
             value={project.endDate}
             onChange={(e) =>
-              setProject({ ...project, endDate: e.target.value })
+              updateProject({ ...project, endDate: e.target.value })
             }
             InputLabelProps={{ shrink: true }}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleEditClose}>Cancel</Button>
-          <Button onClick={handleEditSave} variant="contained" color="primary">
+          <Button onClick={closeDialog}>Cancel</Button>
+          <Button
+            onClick={() => handleSaveProject(project)}
+            variant="contained"
+            color="primary"
+          >
             Save
           </Button>
         </DialogActions>
