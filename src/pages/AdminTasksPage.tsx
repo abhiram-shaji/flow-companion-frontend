@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Typography,
@@ -20,70 +20,37 @@ import {
   InputLabel,
   FormControl,
 } from "@mui/material";
+import { useManageTasks } from "../hooks/useManageTasks";
+import { useTaskDialog } from "../hooks/useTaskDialog";
 
 const AdminTasksPage: React.FC = () => {
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      name: "Task A",
-      assignedTo: "John Doe",
-      dueDate: "2023-12-01",
-      status: "Pending",
-      description: "Initial setup of the project.",
-    },
-    {
-      id: 2,
-      name: "Task B",
-      assignedTo: "Jane Smith",
-      dueDate: "2023-12-15",
-      status: "In Progress",
-      description: "Drafting project documentation.",
-    },
-  ]);
+  const {
+    tasks,
+    handleMarkCompleted,
+    statusFilter,
+    setStatusFilter,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+  } = useManageTasks();
+  const { open, taskData, setTaskData, openDialog, closeDialog } =
+    useTaskDialog();
 
-  const [open, setOpen] = useState(false);
-  const [taskData, setTaskData] = useState({
-    id: 0,
-    name: "",
-    dueDate: "",
-    description: "",
-    assignedTo: "",
-    status: "Pending",
-  });
-
-  const [workers] = useState(["John Doe", "Jane Smith", "Bob Brown"]);
-
-  const handleOpen = (task?: typeof taskData) => {
-    setTaskData(
-      task || {
-        id: 0,
-        name: "",
-        dueDate: "",
-        description: "",
-        assignedTo: "",
-        status: "Pending",
-      }
-    );
-    setOpen(true);
-  };
-
-  const handleClose = () => setOpen(false);
+  const workers = ["John Doe", "Jane Smith", "Bob Brown"];
 
   const handleSave = () => {
+    // Update task in the state or add a new one
     if (taskData.id === 0) {
       // Add new task
-      setTasks([...tasks, { ...taskData, id: tasks.length + 1 }]);
+      tasks.push({ ...taskData, id: tasks.length + 1 });
     } else {
       // Update existing task
-      setTasks(
-        tasks.map((task) => (task.id === taskData.id ? taskData : task))
+      tasks.map((task) =>
+        task.id === taskData.id ? { ...task, ...taskData } : task
       );
     }
-    handleClose();
-  };
-
-  const handleDelete = (id: number) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+    closeDialog();
   };
 
   return (
@@ -92,7 +59,40 @@ const AdminTasksPage: React.FC = () => {
         Tasks Management
       </Typography>
 
-      {/* Table for displaying tasks */}
+      {/* Filters */}
+      <Box sx={{ marginBottom: 3 }}>
+        <FormControl fullWidth sx={{ marginBottom: 2 }}>
+          <InputLabel>Status</InputLabel>
+          <Select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <MenuItem value="">All</MenuItem>
+            <MenuItem value="Pending">Pending</MenuItem>
+            <MenuItem value="In Progress">In Progress</MenuItem>
+            <MenuItem value="Completed">Completed</MenuItem>
+          </Select>
+        </FormControl>
+        <TextField
+          label="Start Date"
+          type="date"
+          fullWidth
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          InputLabelProps={{ shrink: true }}
+          sx={{ marginBottom: 2 }}
+        />
+        <TextField
+          label="End Date"
+          type="date"
+          fullWidth
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+          InputLabelProps={{ shrink: true }}
+        />
+      </Box>
+
+      {/* Tasks Table */}
       <TableContainer component={Paper} sx={{ marginTop: 2 }}>
         <Table>
           <TableHead>
@@ -113,7 +113,7 @@ const AdminTasksPage: React.FC = () => {
                 <TableCell>{task.status}</TableCell>
                 <TableCell>
                   <Button
-                    onClick={() => handleOpen(task)}
+                    onClick={() => openDialog(task)}
                     variant="contained"
                     size="small"
                     sx={{ marginRight: 1 }}
@@ -121,21 +121,13 @@ const AdminTasksPage: React.FC = () => {
                     Edit
                   </Button>
                   <Button
-                    onClick={() => handleDelete(task.id)}
-                    variant="contained"
-                    color="error"
-                    size="small"
-                    sx={{ marginRight: 1 }}
-                  >
-                    Delete
-                  </Button>
-                  <Button
-                    onClick={() => handleOpen(task)}
+                    onClick={() => handleMarkCompleted(task.id)}
                     variant="contained"
                     color="primary"
                     size="small"
+                    sx={{ marginRight: 1 }}
                   >
-                    Assign
+                    Mark Completed
                   </Button>
                 </TableCell>
               </TableRow>
@@ -146,7 +138,7 @@ const AdminTasksPage: React.FC = () => {
 
       {/* Add Task Button */}
       <Button
-        onClick={() => handleOpen()}
+        onClick={() => openDialog()}
         variant="contained"
         color="primary"
         sx={{ marginTop: 2 }}
@@ -154,8 +146,8 @@ const AdminTasksPage: React.FC = () => {
         Add Task
       </Button>
 
-      {/* Dialog for Add/Edit Task */}
-      <Dialog open={open} onClose={handleClose} fullWidth>
+      {/* Add/Edit Task Dialog */}
+      <Dialog open={open} onClose={closeDialog} fullWidth>
         <DialogTitle>
           {taskData.id === 0 ? "Add Task" : "Edit Task"}
         </DialogTitle>
@@ -217,7 +209,7 @@ const AdminTasksPage: React.FC = () => {
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={closeDialog}>Cancel</Button>
           <Button onClick={handleSave} variant="contained" color="primary">
             Save
           </Button>
