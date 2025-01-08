@@ -1,9 +1,11 @@
+import { useNavigate } from "react-router-dom";
+
 export const useNavigation = () => {
-    const navigateTo = (path: string) => {
-      // Replace this with your actual navigation logic (e.g., React Router)
-      console.log(`Navigating to ${path}`);
-    };
-  
-    return { navigateTo };
+  const navigate = useNavigate();
+
+  const navigateTo = (path: string) => {
+    navigate(path);
   };
-  
+
+  return { navigateTo };
+};
