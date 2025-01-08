@@ -10,7 +10,6 @@ const Sidebar: React.FC = () => {
     { name: "Tasks", path: "/worker/tasks" },
     { name: "Budgets", path: "/worker/budgets" },
     { name: "Estimates", path: "/worker/estimates" },
-    { name: "Notifications", path: "/notifications" },
   ];
 
   return (
