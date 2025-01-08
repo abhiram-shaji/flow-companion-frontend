@@ -36,11 +36,24 @@ const AdminBudgetsPage: React.FC = () => {
 
   return (
 
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh" }}>
       {/* Sidebar */}
-      <Sidebar />
+      <Box
+        sx={{
+          width: { sm: 250 }, // Matches the width of the sidebar on desktop
+          flexShrink: 0,
+        }}
+      >
+        <Sidebar />
+      </Box>
 
-    <Box sx={{flex: 1, padding: 3 }}>
+      {/* Main Content */}
+      <Box
+        sx={{
+          flex: 1, // Takes up remaining width
+          padding: 2, // Adds padding around the content
+        }}
+      >
       <Typography variant="h4" gutterBottom>
         Budget Management
       </Typography>
