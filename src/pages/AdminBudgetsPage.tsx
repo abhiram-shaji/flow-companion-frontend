@@ -20,6 +20,8 @@ import { Pie } from "react-chartjs-2";
 import { useManageBudgets } from "../hooks/useManageBudgets";
 import { useChartData } from "../hooks/useChartData";
 import { useBudgetDialog } from "../hooks/useBudgetDialog";
+import Sidebar from "../components/AdminSidebar";
+
 
 const AdminBudgetsPage: React.FC = () => {
   const { budgets, addOrUpdateBudget, deleteBudget } = useManageBudgets();
@@ -33,7 +35,12 @@ const AdminBudgetsPage: React.FC = () => {
   };
 
   return (
-    <Box sx={{ padding: 3 }}>
+
+    <Box sx={{ display: "flex" }}>
+      {/* Sidebar */}
+      <Sidebar />
+
+    <Box sx={{flex: 1, padding: 3 }}>
       <Typography variant="h4" gutterBottom>
         Budget Management
       </Typography>
@@ -160,6 +167,7 @@ const AdminBudgetsPage: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+    </Box>
     </Box>
   );
 };

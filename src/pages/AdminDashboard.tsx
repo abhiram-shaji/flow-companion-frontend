@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography, Card, CardContent, Grid } from "@mui/material";
 import { useAdminDashboardData } from "../hooks/useAdminDashboardData";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/AdminSidebar";
 
 const AdminDashboard: React.FC = () => {
   const { tasks, budgets, estimates } = useAdminDashboardData();
