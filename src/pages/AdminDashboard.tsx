@@ -7,12 +7,24 @@ const AdminDashboard: React.FC = () => {
   const { tasks, budgets, estimates } = useAdminDashboardData();
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh" }}>
       {/* Sidebar */}
-      <Sidebar />
+      <Box
+        sx={{
+          width: { sm: 250 }, // Matches the width of the sidebar on desktop
+          flexShrink: 0,
+        }}
+      >
+        <Sidebar />
+      </Box>
 
       {/* Main Content */}
-      <Box sx={{ flex: 1, padding: 3 }}>
+      <Box
+        sx={{
+          flex: 1, // Takes up remaining width
+          padding: 2, // Adds padding around the content
+        }}
+      >
         <Typography variant="h4" gutterBottom>
           Admin Dashboard
         </Typography>
@@ -53,7 +65,8 @@ const AdminDashboard: React.FC = () => {
                       <strong>Total Budget:</strong> ${budget.totalBudget}
                     </Typography>
                     <Typography variant="body2">
-                      <strong>Remaining Budget:</strong> ${budget.remainingBudget}
+                      <strong>Remaining Budget:</strong> $
+                      {budget.remainingBudget}
                     </Typography>
                   </Box>
                 ))}

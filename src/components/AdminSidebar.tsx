@@ -32,7 +32,7 @@ const Sidebar: React.FC = () => {
   };
 
   const drawerContent = (
-    <Box sx={{ width: 250, bgcolor: "#f4f4f4", height: "100vh", padding: 2 }}>
+    <Box sx={{ width: 250, bgcolor: "#f4f4f4", padding: 2 }}>
       <Typography variant="h6" sx={{ marginBottom: 2 }}>
         Admin Panel
       </Typography>
@@ -78,7 +78,18 @@ const Sidebar: React.FC = () => {
           </Drawer>
         </>
       ) : (
-        <Box sx={{ width: 250, bgcolor: "#f4f4f4", height: "100vh", padding: 2 }}>
+        <Box
+          sx={{
+            position: "fixed", // Fixes the sidebar on the left side
+            top: 0,
+            left: 0,
+            height: "100vh", // Full viewport height
+            width: 250,
+            bgcolor: "#f4f4f4",
+            padding: 2,
+            overflowY: "auto", // Enables scrolling if content exceeds the height
+          }}
+        >
           {drawerContent}
         </Box>
       )}
