@@ -11,6 +11,7 @@ const Sidebar: React.FC = () => {
     { name: "Manage Budgets", path: "/admin/budgets" },
     { name: "Manage Estimates", path: "/admin/estimates" },
     { name: "Projects", path: "/admin/projects" },
+    { name: "User Accounts", path: "/admin/user-management" },
   ];
 
   return (
