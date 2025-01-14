@@ -1,14 +1,6 @@
 import { useState } from "react";
 
 export const useAdminDashboardData = () => {
-  const [tasks] = useState([
-    {
-      id: 1,
-      name: "Design Homepage",
-      assignedTo: "John Doe",
-      status: "In Progress",
-    },
-  ]);
 
   const [budgets] = useState([
     {
@@ -28,5 +20,14 @@ export const useAdminDashboardData = () => {
     },
   ]);
 
-  return { tasks, budgets, estimates };
+  return { budgets, estimates };
 };
+
+
+/*Implement these api here instead of dummy data
+
+host : https://flow-companion-backend.onrender.com
+
+
+
+*/

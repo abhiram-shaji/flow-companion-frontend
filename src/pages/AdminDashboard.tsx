@@ -4,7 +4,7 @@ import { useAdminDashboardData } from "../hooks/useAdminDashboardData";
 import Sidebar from "../components/AdminSidebar";
 
 const AdminDashboard: React.FC = () => {
-  const { tasks, budgets, estimates } = useAdminDashboardData();
+  const { budgets, estimates } = useAdminDashboardData();
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
@@ -29,27 +29,6 @@ const AdminDashboard: React.FC = () => {
           Admin Dashboard
         </Typography>
         <Grid container spacing={3}>
-          {/* Recent Tasks Card */}
-          <Grid item xs={12} sm={6} md={4}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6">Recent Tasks</Typography>
-                {tasks.map((task) => (
-                  <Box key={task.id} sx={{ marginBottom: 1 }}>
-                    <Typography variant="body2">
-                      <strong>Task Name:</strong> {task.name}
-                    </Typography>
-                    <Typography variant="body2">
-                      <strong>Assigned To:</strong> {task.assignedTo}
-                    </Typography>
-                    <Typography variant="body2">
-                      <strong>Status:</strong> {task.status}
-                    </Typography>
-                  </Box>
-                ))}
-              </CardContent>
-            </Card>
-          </Grid>
 
           {/* Budget Overview Card */}
           <Grid item xs={12} sm={6} md={4}>
