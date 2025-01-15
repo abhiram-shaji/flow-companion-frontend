@@ -1,57 +1,80 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
+  Grid,
+  Card,
+  CardContent,
   Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
   Dialog,
-  DialogActions,
-  DialogContent,
   DialogTitle,
+  DialogContent,
+  DialogActions,
   TextField,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
 } from "@mui/material";
-import { useManageTasks } from "../hooks/useManageTasks";
 import Sidebar from "../components/Sidebar";
-import { useTaskDialog } from "../hooks/useTaskDialog";
+import useTaskManagement from "../hooks/useTaskManagement";
 
-const AdminTasksPage: React.FC = () => {
-  const {
-    tasks,
-    handleMarkCompleted,
-    statusFilter,
-    setStatusFilter,
-    startDate,
-    setStartDate,
-    endDate,
-    setEndDate,
-  } = useManageTasks();
-  const { open, taskData, setTaskData, openDialog, closeDialog } =
-    useTaskDialog();
+const TaskManagement: React.FC = () => {
+  const { tasks, addTask, editTask, deleteTask, markTaskAsComplete, loading, error } =
+    useTaskManagement();
 
-  const workers = ["John Doe", "Jane Smith", "Bob Brown"];
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [dialogMode, setDialogMode] = useState<"add" | "edit">("add");
+  const [currentTask, setCurrentTask] = useState<{
+    taskId?: number;
+    projectId: number;
+    taskName: string;
+    assignedTo: number;
+    dueDate: string;
+    status: string;
+  }>({
+    taskId: undefined,
+    projectId: 0,
+    taskName: "",
+    assignedTo: 0,
+    dueDate: "",
+    status: "Pending",
+  });
 
-  const handleSave = () => {
-    // Update task in the state or add a new one
-    if (taskData.id === 0) {
-      // Add new task
-      tasks.push({ ...taskData, id: tasks.length + 1 });
-    } else {
-      // Update existing task
-      tasks.map((task) =>
-        task.id === taskData.id ? { ...task, ...taskData } : task
+  const handleOpenDialog = (mode: "add" | "edit", task?: typeof currentTask) => {
+    setDialogMode(mode);
+    setCurrentTask(
+      task || {
+        taskId: undefined,
+        projectId: 0,
+        taskName: "",
+        assignedTo: 0,
+        dueDate: "",
+        status: "Pending",
+      }
+    );
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
+
+  const handleSaveTask = async () => {
+    if (dialogMode === "add") {
+      await addTask(
+        currentTask.projectId,
+        currentTask.taskName,
+        currentTask.assignedTo,
+        currentTask.dueDate,
+        currentTask.status
+      );
+    } else if (dialogMode === "edit" && currentTask.taskId) {
+      await editTask(
+        currentTask.taskId,
+        currentTask.taskName,
+        currentTask.assignedTo,
+        currentTask.dueDate,
+        currentTask.status
       );
     }
-    closeDialog();
+    setDialogOpen(false);
   };
 
   return (
@@ -59,7 +82,7 @@ const AdminTasksPage: React.FC = () => {
       {/* Sidebar */}
       <Box
         sx={{
-          width: { sm: 250 }, // Matches the width of the sidebar on desktop
+          width: { sm: 250 },
           flexShrink: 0,
         }}
       >
@@ -69,175 +92,151 @@ const AdminTasksPage: React.FC = () => {
       {/* Main Content */}
       <Box
         sx={{
-          flex: 1, // Takes up remaining width
-          padding: 2, // Adds padding around the content
+          flex: 1,
+          padding: 3,
+          backgroundColor: "#f5f5f5",
         }}
       >
         <Typography variant="h4" gutterBottom>
-          Tasks Management
+          Task Management
         </Typography>
 
-        {/* Filters */}
-        <Box sx={{ marginBottom: 3 }}>
-          <FormControl fullWidth sx={{ marginBottom: 2 }}>
-            <InputLabel>Status</InputLabel>
-            <Select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <MenuItem value="">All</MenuItem>
-              <MenuItem value="Pending">Pending</MenuItem>
-              <MenuItem value="In Progress">In Progress</MenuItem>
-              <MenuItem value="Completed">Completed</MenuItem>
-            </Select>
-          </FormControl>
-          <TextField
-            label="Start Date"
-            type="date"
-            fullWidth
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            InputLabelProps={{ shrink: true }}
-            sx={{ marginBottom: 2 }}
-          />
-          <TextField
-            label="End Date"
-            type="date"
-            fullWidth
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            InputLabelProps={{ shrink: true }}
-          />
-        </Box>
+        {loading && (
+          <Typography variant="h6" color="primary" sx={{ marginBottom: 2 }}>
+            Loading tasks...
+          </Typography>
+        )}
 
-        {/* Tasks Table */}
-        <TableContainer component={Paper} sx={{ marginTop: 2 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Task Name</TableCell>
-                <TableCell>Assigned To</TableCell>
-                <TableCell>Due Date</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {tasks.map((task) => (
-                <TableRow key={task.id}>
-                  <TableCell>{task.name}</TableCell>
-                  <TableCell>{task.assignedTo}</TableCell>
-                  <TableCell>{task.dueDate}</TableCell>
-                  <TableCell>{task.status}</TableCell>
-                  <TableCell>
-                    <Button
-                      onClick={() => openDialog(task)}
-                      variant="contained"
-                      size="small"
-                      sx={{ marginRight: 1 }}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      onClick={() => handleMarkCompleted(task.id)}
-                      variant="contained"
-                      color="primary"
-                      size="small"
-                      sx={{ marginRight: 1 }}
-                    >
-                      Mark Completed
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        {error && (
+          <Typography variant="h6" color="error" sx={{ marginBottom: 2 }}>
+            {error}
+          </Typography>
+        )}
 
-        {/* Add Task Button */}
         <Button
-          onClick={() => openDialog()}
           variant="contained"
           color="primary"
-          sx={{ marginTop: 2 }}
+          onClick={() => handleOpenDialog("add")}
+          sx={{ marginBottom: 2 }}
         >
           Add Task
         </Button>
 
+        <Grid container spacing={3}>
+          {tasks.map((task) => (
+            <Grid item xs={12} sm={6} md={4} key={task.taskId}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6">{task.taskName}</Typography>
+                  <Typography>Project ID: {task.projectId}</Typography>
+                  <Typography>Assigned To: {task.assignedTo}</Typography>
+                  <Typography>Due Date: {task.dueDate}</Typography>
+                  <Typography>Status: {task.status}</Typography>
+
+                  <Box sx={{ display: "flex", gap: 1, marginTop: 2 }}>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      onClick={() =>
+                        handleOpenDialog("edit", {
+                          taskId: task.taskId,
+                          projectId: task.projectId,
+                          taskName: task.taskName,
+                          assignedTo: task.assignedTo,
+                          dueDate: task.dueDate,
+                          status: task.status,
+                        })
+                      }
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      onClick={() => deleteTask(task.taskId)}
+                    >
+                      Delete
+                    </Button>
+                    {task.status !== "Complete" && (
+                      <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => markTaskAsComplete(task.taskId)}
+                      >
+                        Mark Complete
+                      </Button>
+                    )}
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+
         {/* Add/Edit Task Dialog */}
-        <Dialog open={open} onClose={closeDialog} fullWidth>
-          <DialogTitle>
-            {taskData.id === 0 ? "Add Task" : "Edit Task"}
-          </DialogTitle>
+        <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+          <DialogTitle>{dialogMode === "add" ? "Add Task" : "Edit Task"}</DialogTitle>
           <DialogContent>
+            <TextField
+              label="Project ID"
+              fullWidth
+              margin="dense"
+              type="number"
+              value={currentTask.projectId}
+              onChange={(e) =>
+                setCurrentTask((prev) => ({ ...prev, projectId: Number(e.target.value) }))
+              }
+            />
             <TextField
               label="Task Name"
               fullWidth
-              value={taskData.name}
+              margin="dense"
+              value={currentTask.taskName}
               onChange={(e) =>
-                setTaskData({ ...taskData, name: e.target.value })
+                setCurrentTask((prev) => ({ ...prev, taskName: e.target.value }))
               }
-              sx={{ marginBottom: 2 }}
+            />
+            <TextField
+              label="Assigned To"
+              fullWidth
+              margin="dense"
+              type="number"
+              value={currentTask.assignedTo}
+              onChange={(e) =>
+                setCurrentTask((prev) => ({ ...prev, assignedTo: Number(e.target.value) }))
+              }
             />
             <TextField
               label="Due Date"
-              type="date"
               fullWidth
-              value={taskData.dueDate}
+              margin="dense"
+              type="date"
+              value={currentTask.dueDate}
               onChange={(e) =>
-                setTaskData({ ...taskData, dueDate: e.target.value })
+                setCurrentTask((prev) => ({ ...prev, dueDate: e.target.value }))
               }
               InputLabelProps={{ shrink: true }}
-              sx={{ marginBottom: 2 }}
             />
             <TextField
-              label="Description"
+              label="Status"
               fullWidth
-              value={taskData.description}
+              margin="dense"
+              value={currentTask.status}
               onChange={(e) =>
-                setTaskData({ ...taskData, description: e.target.value })
+                setCurrentTask((prev) => ({ ...prev, status: e.target.value }))
               }
-              sx={{ marginBottom: 2 }}
             />
-            <FormControl fullWidth sx={{ marginBottom: 2 }}>
-              <InputLabel>Assign To</InputLabel>
-              <Select
-                value={taskData.assignedTo}
-                onChange={(e) =>
-                  setTaskData({ ...taskData, assignedTo: e.target.value })
-                }
-              >
-                {workers.map((worker) => (
-                  <MenuItem key={worker} value={worker}>
-                    {worker}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel>Status</InputLabel>
-              <Select
-                value={taskData.status}
-                onChange={(e) =>
-                  setTaskData({ ...taskData, status: e.target.value })
-                }
-              >
-                <MenuItem value="Pending">Pending</MenuItem>
-                <MenuItem value="In Progress">In Progress</MenuItem>
-                <MenuItem value="Completed">Completed</MenuItem>
-              </Select>
-            </FormControl>
           </DialogContent>
           <DialogActions>
-            <Button onClick={closeDialog}>Cancel</Button>
-            <Button onClick={handleSave} variant="contained" color="primary">
+            <Button onClick={handleCloseDialog}>Cancel</Button>
+            <Button onClick={handleSaveTask} variant="contained" color="primary">
               Save
             </Button>
           </DialogActions>
         </Dialog>
-      </Box>{" "}
+      </Box>
     </Box>
   );
 };
 
-export default AdminTasksPage;
+export default TaskManagement;
