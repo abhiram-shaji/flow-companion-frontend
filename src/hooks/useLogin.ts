@@ -33,11 +33,8 @@ const useLogin = () => {
       // Navigate based on role
       if (role === "admin") {
         navigate("/admin/dashboard");
-      } else if (role === "worker") {
+      } else 
         navigate("/worker/dashboard");
-      } else {
-        setError("Unknown role. Please contact support.");
-      }
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.data?.error) {
         setError(err.response.data.error); // Use the error message from the backend

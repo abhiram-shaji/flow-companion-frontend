@@ -23,7 +23,7 @@ const Sidebar: React.FC = () => {
     localStorage.removeItem("token");
 
     // Navigate back to the login page
-    navigate("/login");
+    navigate("/");
   };
 
   // Define pages based on role
