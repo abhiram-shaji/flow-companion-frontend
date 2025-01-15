@@ -19,7 +19,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useProjectDetails } from "../hooks/useProjectDetails";
-import Sidebar from "../components/AdminSidebar";
+import Sidebar from "../components/Sidebar";
 import { useDialog } from "../hooks/useDialog";
 
 const ProjectDetailsPage: React.FC = () => {

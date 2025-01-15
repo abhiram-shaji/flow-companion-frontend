@@ -21,7 +21,7 @@ import {
   FormControl,
 } from "@mui/material";
 import { useManageTasks } from "../hooks/useManageTasks";
-import Sidebar from "../components/AdminSidebar";
+import Sidebar from "../components/Sidebar";
 import { useTaskDialog } from "../hooks/useTaskDialog";
 
 const AdminTasksPage: React.FC = () => {

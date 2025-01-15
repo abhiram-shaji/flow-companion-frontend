@@ -17,7 +17,7 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { useManageProjects } from "../hooks/useManageProjects";
-import Sidebar from "../components/AdminSidebar";
+import Sidebar from "../components/Sidebar";
 import { useProjectDialog } from "../hooks/useProjectDialog";
 
 const ProjectsPage: React.FC = () => {

@@ -21,7 +21,7 @@ import {
   InputLabel,
   FormControl,
 } from "@mui/material";
-import Sidebar from "../components/AdminSidebar";
+import Sidebar from "../components/Sidebar";
 import useWorkers from "../hooks/useWorkers";
 
 const UserManagement: React.FC = () => {

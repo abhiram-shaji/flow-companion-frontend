@@ -10,7 +10,7 @@ const useLogout = () => {
     localStorage.removeItem("token"); // If you're using a token
 
     // Redirect to the login page
-    navigate("/login");
+    navigate("/");
   };
 
   return {

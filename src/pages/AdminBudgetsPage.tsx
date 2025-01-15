@@ -20,7 +20,7 @@ import { Pie } from "react-chartjs-2";
 import { useManageBudgets } from "../hooks/useManageBudgets";
 import { useChartData } from "../hooks/useChartData";
 import { useBudgetDialog } from "../hooks/useBudgetDialog";
-import Sidebar from "../components/AdminSidebar";
+import Sidebar from "../components/Sidebar";
 
 
 const AdminBudgetsPage: React.FC = () => {

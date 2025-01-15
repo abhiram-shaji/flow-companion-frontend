@@ -7,6 +7,7 @@ import {
   Button,
   Grid,
 } from "@mui/material";
+import Sidebar from "../components/Sidebar";
 import { useNotifications } from "../hooks/useNotifications";
 
 const NotificationsPage: React.FC = () => {

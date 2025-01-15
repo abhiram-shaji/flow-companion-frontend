@@ -17,7 +17,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useManageEstimates } from "../hooks/useManageEstimates";
-import Sidebar from "../components/AdminSidebar";
+import Sidebar from "../components/Sidebar";
 import { useEstimateDialog } from "../hooks/useEstimateDialog";
 
 const AdminEstimatesPage: React.FC = () => {
