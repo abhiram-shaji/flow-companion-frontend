@@ -10,23 +10,34 @@ const useLogin = () => {
 
   const handleLogin = async () => {
     if (email === "admin" && password === "admin") {
+      localStorage.setItem("role", "admin"); // Save the role in localStorage
       navigate("/admin/dashboard");
       return;
     }
-
+  
     try {
-      const response = await axios.post("https://flow-companion-backend.onrender.com/api/users/login", {
-        email,
-        password,
-      });
-
-      const { message, userId } = response.data;
-
-      // Persist the logged-in user ID for use in other pages
+      const response = await axios.post(
+        "https://flow-companion-backend.onrender.com/api/users/login",
+        {
+          email,
+          password,
+        }
+      );
+  
+      const { message, userId, role } = response.data;
+  
+      // Persist the user information, including role
       localStorage.setItem("userId", userId);
-
-      // Navigate to the worker dashboard
-      navigate("/worker/dashboard");
+      localStorage.setItem("role", role);
+  
+      // Navigate based on role
+      if (role === "admin") {
+        navigate("/admin/dashboard");
+      } else if (role === "worker") {
+        navigate("/worker/dashboard");
+      } else {
+        setError("Unknown role. Please contact support.");
+      }
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.data?.error) {
         setError(err.response.data.error); // Use the error message from the backend
@@ -35,6 +46,7 @@ const useLogin = () => {
       }
     }
   };
+  
 
   return {
     email,
