@@ -7,13 +7,9 @@ import UserManagement from "./pages/UserManagement";
 import ProjectsPage from "./pages/ProjectsPage";
 import ProjectDetailsPage from "./pages/ProjectDetailsPage";
 import AdminTasksPage from "./pages/AdminTasksPage";
-import AdminBudgetsPage from "./pages/AdminBudgetsPage";
-import AdminEstimatesPage from "./pages/AdminEstimatesPage";
 
-import WorkerDashboardPage from "./pages/WorkerDashboardPage";
 import WorkerTasksPage from "./pages/WorkerTasksPage";
-import WorkerBudgetsPage from "./pages/WorkerBudgetsPage";
-import WorkerEstimatesPage from "./pages/WorkerEstimatesPage";
+
 import NotificationsPage from "./pages/NotificationsPage";
 
 import ErrorPage from "./pages/ErrorPage";
@@ -39,13 +35,7 @@ const ErrorBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             <Route path="/admin/projects" element={<ProjectsPage />} />
             <Route path="/admin/projects/:id" element={<ProjectDetailsPage />} />
             <Route path="/admin/tasks" element={<AdminTasksPage />} />
-            <Route path="/admin/budgets" element={<AdminBudgetsPage />} />
-            <Route path="/admin/estimates" element={<AdminEstimatesPage />} />
-  
-            <Route path="/worker/dashboard" element={<WorkerDashboardPage />} />
             <Route path="/worker/tasks" element={<WorkerTasksPage />} />
-            <Route path="/worker/budgets" element={<WorkerBudgetsPage />} />
-            <Route path="/worker/estimates" element={<WorkerEstimatesPage />} />
   
             <Route path="/notifications" element={<NotificationsPage />} />
   

@@ -31,10 +31,8 @@ const Sidebar: React.FC = () => {
     ? [
         { name: "Dashboard", path: "/admin/dashboard" },
         { name: "Manage Tasks", path: "/admin/tasks" },
-        { name: "Manage Budgets", path: "/admin/budgets" },
-        { name: "Manage Estimates", path: "/admin/estimates" },
-        { name: "Projects", path: "/admin/projects" },
-        { name: "User Accounts", path: "/admin/user-management" },
+        { name: "Manage Projects", path: "/admin/projects" },
+        { name: "Manage User", path: "/admin/user-management" },
       ]
     : [
         { name: "Dashboard", path: "/worker/dashboard" },
