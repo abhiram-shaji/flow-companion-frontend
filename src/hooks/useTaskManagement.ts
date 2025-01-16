@@ -54,7 +54,7 @@ const useTaskManagement = () => {
       });
   
       const response = await axios.post<TaskResponse>(
-        "http://localhost:5000/api/tasks",
+        "https://flow-companion-backend.onrender.com/api/tasks/",
         {
           projectId, // Include projectId in the payload
           taskName,
