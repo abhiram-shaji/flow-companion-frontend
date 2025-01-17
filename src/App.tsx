@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import UserManagement from "./pages/UserManagement";
-import ProjectsPage from "./pages/ProjectsPage";
+import ProjectOverview from "./pages/ProjectOverview";
 import AdminTasksPage from "./pages/AdminTasksPage";
 
 import WorkerTasksPage from "./pages/WorkerTasksPage";
@@ -31,7 +31,7 @@ const ErrorBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/user-management" element={<UserManagement />} />
-            <Route path="/admin/projects" element={<ProjectsPage />} />
+            <Route path="/admin/ProjectOverview" element={<ProjectOverview />} />
             <Route path="/admin/tasks" element={<AdminTasksPage />} />
             <Route path="/worker/tasks" element={<WorkerTasksPage />} />
             ProjectDetailsPage

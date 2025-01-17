@@ -17,25 +17,11 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Sidebar from "../components/Sidebar";
-
-const projects = [
-  {
-    projectId: 1,
-    name: "New Building Project",
-    budget: 50000,
-    currentSpend: 0,
-    startDate: "2025-01-01",
-    endDate: "2025-12-31",
-    budgets: [
-      { budgetId: 1, projectId: 1, budgetLimit: 10000, currentSpend: 6000, remainingBudget: 4000 },
-    ],
-    estimates: [
-      { estimateId: 1, projectId: 1, estimatedCost: 15000, deadline: "2025-01-31" },
-    ],
-  },
-];
+import useProjects from "../hooks/useProjects";
 
 const ProjectOverview: React.FC = () => {
+  const { projects } = useProjects();
+
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
       {/* Sidebar */}
