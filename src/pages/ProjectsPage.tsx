@@ -2,7 +2,11 @@ import React from "react";
 import {
   Box,
   Typography,
-  Button,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Card,
+  CardContent,
   Table,
   TableBody,
   TableCell,
@@ -10,35 +14,34 @@ import {
   TableHead,
   TableRow,
   Paper,
-  TextField,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
 } from "@mui/material";
-import { useManageProjects } from "../hooks/useManageProjects";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Sidebar from "../components/Sidebar";
-import { useProjectDialog } from "../hooks/useProjectDialog";
 
-const ProjectsPage: React.FC = () => {
-  const { projects, addOrUpdateProject, deleteProject } = useManageProjects();
-  const { open, projectData, setProjectData, openDialog, closeDialog } =
-    useProjectDialog();
+const projects = [
+  {
+    projectId: 1,
+    name: "New Building Project",
+    budget: 50000,
+    currentSpend: 0,
+    startDate: "2025-01-01",
+    endDate: "2025-12-31",
+    budgets: [
+      { budgetId: 1, projectId: 1, budgetLimit: 10000, currentSpend: 6000, remainingBudget: 4000 },
+    ],
+    estimates: [
+      { estimateId: 1, projectId: 1, estimatedCost: 15000, deadline: "2025-01-31" },
+    ],
+  },
+];
 
-  const handleSave = () => {
-    addOrUpdateProject({
-      ...projectData,
-      budget: Number(projectData.budget),
-    });
-    closeDialog();
-  };
-
+const ProjectOverview: React.FC = () => {
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
       {/* Sidebar */}
       <Box
         sx={{
-          width: { sm: 250 }, // Matches the width of the sidebar on desktop
+          width: { sm: 250 }, // Matches the width of the sidebar
           flexShrink: 0,
         }}
       >
@@ -53,124 +56,77 @@ const ProjectsPage: React.FC = () => {
         }}
       >
         <Typography variant="h4" gutterBottom>
-          Projects Management
+          Project Overview
         </Typography>
+        {projects.map((project) => (
+          <Accordion key={project.projectId}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="h6">{project.name}</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {/* Project Details */}
+              <Card variant="outlined" sx={{ marginBottom: 2 }}>
+                <CardContent>
+                  <Typography><strong>Start Date:</strong> {project.startDate}</Typography>
+                  <Typography><strong>End Date:</strong> {project.endDate}</Typography>
+                  <Typography><strong>Total Budget:</strong> ${project.budget}</Typography>
+                  <Typography><strong>Current Spend:</strong> ${project.currentSpend}</Typography>
+                </CardContent>
+              </Card>
 
-        {/* Table for displaying projects */}
-        <TableContainer component={Paper} sx={{ marginTop: 2 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Project Name</TableCell>
-                <TableCell>Budget</TableCell>
-                <TableCell>Start Date</TableCell>
-                <TableCell>End Date</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {projects.map((project) => (
-                <TableRow key={project.id}>
-                  <TableCell>{project.name}</TableCell>
-                  <TableCell>${project.budget}</TableCell>
-                  <TableCell>{project.startDate}</TableCell>
-                  <TableCell>{project.endDate}</TableCell>
-                  <TableCell>
-                    <Button
-                      onClick={() =>
-                        openDialog({
-                          ...project,
-                          budget: project.budget.toString(),
-                        })
-                      }
-                      variant="contained"
-                      size="small"
-                      sx={{ marginRight: 1 }}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      onClick={() => deleteProject(project.id)}
-                      variant="contained"
-                      color="error"
-                      size="small"
-                    >
-                      Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              {/* Budgets Table */}
+              <Typography variant="subtitle1"><strong>Budgets:</strong></Typography>
+              <TableContainer component={Paper} sx={{ marginTop: 2 }}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Budget ID</TableCell>
+                      <TableCell>Budget Limit</TableCell>
+                      <TableCell>Current Spend</TableCell>
+                      <TableCell>Remaining Budget</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {project.budgets.map((budget) => (
+                      <TableRow key={budget.budgetId}>
+                        <TableCell>{budget.budgetId}</TableCell>
+                        <TableCell>${budget.budgetLimit}</TableCell>
+                        <TableCell>${budget.currentSpend}</TableCell>
+                        <TableCell>${budget.remainingBudget}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
 
-        {/* Add Project Button */}
-        <Button
-          onClick={() => openDialog()}
-          variant="contained"
-          color="primary"
-          sx={{ marginTop: 2 }}
-        >
-          Add Project
-        </Button>
-
-        {/* Dialog for Add/Edit Project */}
-        <Dialog open={open} onClose={closeDialog} fullWidth>
-          <DialogTitle>
-            {projectData.id === 0 ? "Add Project" : "Edit Project"}
-          </DialogTitle>
-          <DialogContent>
-            <TextField
-              label="Project Name"
-              fullWidth
-              value={projectData.name}
-              onChange={(e) =>
-                setProjectData({ ...projectData, name: e.target.value })
-              }
-              sx={{ marginBottom: 2 }}
-            />
-            <TextField
-              label="Budget"
-              type="number"
-              fullWidth
-              value={projectData.budget}
-              onChange={(e) =>
-                setProjectData({ ...projectData, budget: e.target.value })
-              }
-              sx={{ marginBottom: 2 }}
-            />
-            <TextField
-              label="Start Date"
-              type="date"
-              fullWidth
-              value={projectData.startDate}
-              onChange={(e) =>
-                setProjectData({ ...projectData, startDate: e.target.value })
-              }
-              InputLabelProps={{ shrink: true }}
-              sx={{ marginBottom: 2 }}
-            />
-            <TextField
-              label="End Date"
-              type="date"
-              fullWidth
-              value={projectData.endDate}
-              onChange={(e) =>
-                setProjectData({ ...projectData, endDate: e.target.value })
-              }
-              InputLabelProps={{ shrink: true }}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={closeDialog}>Cancel</Button>
-            <Button onClick={handleSave} variant="contained" color="primary">
-              Save
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Box>{" "}
+              {/* Estimates Table */}
+              <Typography variant="subtitle1" sx={{ marginTop: 2 }}><strong>Estimates:</strong></Typography>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Estimate ID</TableCell>
+                      <TableCell>Estimated Cost</TableCell>
+                      <TableCell>Deadline</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {project.estimates.map((estimate) => (
+                      <TableRow key={estimate.estimateId}>
+                        <TableCell>{estimate.estimateId}</TableCell>
+                        <TableCell>${estimate.estimatedCost}</TableCell>
+                        <TableCell>{estimate.deadline}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </AccordionDetails>
+          </Accordion>
+        ))}
+      </Box>
     </Box>
   );
 };
 
-export default ProjectsPage;
+export default ProjectOverview;

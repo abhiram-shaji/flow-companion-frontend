@@ -5,7 +5,6 @@ import LoginPage from "./pages/LoginPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import UserManagement from "./pages/UserManagement";
 import ProjectsPage from "./pages/ProjectsPage";
-import ProjectDetailsPage from "./pages/ProjectDetailsPage";
 import AdminTasksPage from "./pages/AdminTasksPage";
 
 import WorkerTasksPage from "./pages/WorkerTasksPage";
@@ -33,9 +32,9 @@ const ErrorBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/user-management" element={<UserManagement />} />
             <Route path="/admin/projects" element={<ProjectsPage />} />
-            <Route path="/admin/projects/:id" element={<ProjectDetailsPage />} />
             <Route path="/admin/tasks" element={<AdminTasksPage />} />
             <Route path="/worker/tasks" element={<WorkerTasksPage />} />
+            ProjectDetailsPage
   
             <Route path="/notifications" element={<NotificationsPage />} />
   
