@@ -77,10 +77,14 @@ const ProjectOverview: React.FC = () => {
         </Button>
 
         <AddProjectModal
-          open={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSubmit={handleAddProject}
-        />
+  open={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+  onSubmit={(newProject) => {
+    handleAddProject(newProject); // Handle the project addition logic here
+  }}
+/>
+
+
 
         {/* Loading State */}
         {loading && (

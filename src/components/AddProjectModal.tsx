@@ -6,7 +6,10 @@ import {
   TextField,
   Button,
   Stack,
+  CircularProgress,
+  Alert,
 } from "@mui/material";
+import axios from "axios";
 
 interface AddProjectModalProps {
   open: boolean;
@@ -19,27 +22,48 @@ interface AddProjectModalProps {
   }) => void;
 }
 
-const AddProjectModal: React.FC<AddProjectModalProps> = ({ open, onClose, onSubmit }) => {
+const AddProjectModal: React.FC<AddProjectModalProps> = ({
+  open,
+  onClose,
+  onSubmit,
+}) => {
   const [formData, setFormData] = useState({
     name: "",
     budget: "",
     startDate: "",
     endDate: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = () => {
-    onSubmit({
-      name: formData.name,
-      budget: Number(formData.budget),
-      startDate: formData.startDate,
-      endDate: formData.endDate,
-    });
-    onClose();
-    setFormData({ name: "", budget: "", startDate: "", endDate: "" });
+  const handleSubmit = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.post("https://flow-companion-backend.onrender.com/api/projects", {
+        name: formData.name,
+        budget: Number(formData.budget),
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+      });
+      console.log(response.data);
+      onSubmit({
+        name: formData.name,
+        budget: Number(formData.budget),
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+      });
+      onClose();
+      setFormData({ name: "", budget: "", startDate: "", endDate: "" });
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to add project. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -61,6 +85,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ open, onClose, onSubm
         <Typography variant="h6" gutterBottom>
           Add New Project
         </Typography>
+        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
         <Stack spacing={2}>
           <TextField
             label="Project Name"
@@ -99,9 +124,15 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ open, onClose, onSubm
             variant="contained"
             color="primary"
             onClick={handleSubmit}
-            disabled={!formData.name || !formData.budget || !formData.startDate || !formData.endDate}
+            disabled={
+              loading ||
+              !formData.name ||
+              !formData.budget ||
+              !formData.startDate ||
+              !formData.endDate
+            }
           >
-            Submit
+            {loading ? <CircularProgress size={24} /> : "Submit"}
           </Button>
         </Stack>
       </Box>
