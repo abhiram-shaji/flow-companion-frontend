@@ -129,11 +129,11 @@ const UserManagement: React.FC = () => {
           color="primary"
           sx={{ marginTop: 2 }}
         >
-          Add Worker
+          Add New Supervisor
         </Button>
         <Dialog open={open} onClose={handleClose} fullWidth>
           <DialogTitle>
-            {workerData.id === 0 ? "Add Worker" : "Edit Worker"}
+            {workerData.id === 0 ? "Add Supervisor" : "Edit Supervisor"}
           </DialogTitle>
           <DialogContent>
             <TextField
