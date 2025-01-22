@@ -81,7 +81,7 @@ const UserManagement: React.FC = () => {
         }}
       >
         <Typography variant="h4" gutterBottom>
-          User Management
+          Manage Supervisors
         </Typography>
         <TableContainer component={Paper} sx={{ marginTop: 2 }}>
           <Table>
