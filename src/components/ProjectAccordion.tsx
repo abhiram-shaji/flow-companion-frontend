@@ -1,4 +1,5 @@
-import React from "react";
+// components/ProjectAccordion.tsx
+import React, { useState } from "react";
 import {
   Accordion,
   AccordionSummary,
@@ -13,8 +14,10 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Button,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import AddBudgetModal from "./AddBudgetModal";
 
 interface ProjectAccordionProps {
   project: any; // Replace 'any' with your project type
@@ -23,6 +26,13 @@ interface ProjectAccordionProps {
 }
 
 const ProjectAccordion: React.FC<ProjectAccordionProps> = ({ project, expanded, handleAccordionChange }) => {
+  const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
+
+  const handleAddBudget = (newBudget: any) => {
+    console.log("New Budget:", newBudget);
+    // Add logic to handle the new budget
+  };
+
   return (
     <Accordion
       key={project.projectId}
@@ -75,6 +85,21 @@ const ProjectAccordion: React.FC<ProjectAccordionProps> = ({ project, expanded, 
             </TableBody>
           </Table>
         </TableContainer>
+
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ marginTop: 2 }}
+          onClick={() => setIsBudgetModalOpen(true)}
+        >
+          Add New Budget
+        </Button>
+
+        <AddBudgetModal
+          open={isBudgetModalOpen}
+          onClose={() => setIsBudgetModalOpen(false)}
+          onSubmit={handleAddBudget}
+        />
 
         <Typography variant="subtitle1" sx={{ marginTop: 2 }}>
           <strong>Estimates:</strong>
