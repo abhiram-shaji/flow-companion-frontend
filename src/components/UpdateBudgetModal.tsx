@@ -8,13 +8,13 @@ import {
   Button,
 } from "@mui/material";
 
-interface AddBudgetModalProps {
+interface UpdateBudgetModalProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (budget: { budgetLimit: number; currentSpend: number }) => void;
 }
 
-const AddBudgetModal: React.FC<AddBudgetModalProps> = ({ open, onClose, onSubmit }) => {
+const UpdateBudgetModal: React.FC<UpdateBudgetModalProps> = ({ open, onClose, onSubmit }) => {
   const [budgetLimit, setBudgetLimit] = useState<number>(0);
   const [currentSpend, setCurrentSpend] = useState<number>(0);
 
@@ -58,4 +58,4 @@ const AddBudgetModal: React.FC<AddBudgetModalProps> = ({ open, onClose, onSubmit
   );
 };
 
-export default AddBudgetModal;
+export default UpdateBudgetModal;

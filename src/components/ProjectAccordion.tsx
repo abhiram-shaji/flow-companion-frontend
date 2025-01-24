@@ -17,7 +17,7 @@ import {
   Button,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import AddBudgetModal from "./AddBudgetModal";
+import UpdateBudgetModal from "./UpdateBudgetModal";
 
 interface ProjectAccordionProps {
   project: any; // Replace 'any' with your project type
@@ -60,42 +60,16 @@ const ProjectAccordion: React.FC<ProjectAccordionProps> = ({ project, expanded, 
           </CardContent>
         </Card>
 
-        <Typography variant="subtitle1">
-          <strong>Budgets:</strong>
-        </Typography>
-        <TableContainer component={Paper} sx={{ marginTop: 2 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Budget ID</TableCell>
-                <TableCell>Budget Limit</TableCell>
-                <TableCell>Current Spend</TableCell>
-                <TableCell>Remaining Budget</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {project.budgets.map((budget: any) => (
-                <TableRow key={budget.budgetId}>
-                  <TableCell>{budget.budgetId}</TableCell>
-                  <TableCell>${budget.budgetLimit}</TableCell>
-                  <TableCell>${budget.currentSpend}</TableCell>
-                  <TableCell>${budget.remainingBudget}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
 
         <Button
           variant="contained"
           color="primary"
-          sx={{ marginTop: 2 }}
           onClick={() => setIsBudgetModalOpen(true)}
         >
-          Add New Budget
+          Update Budget
         </Button>
 
-        <AddBudgetModal
+        <UpdateBudgetModal
           open={isBudgetModalOpen}
           onClose={() => setIsBudgetModalOpen(false)}
           onSubmit={handleAddBudget}
