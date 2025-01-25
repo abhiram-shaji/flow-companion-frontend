@@ -1,31 +1,9 @@
+
 import { useState, useEffect } from "react";
-import axios from "axios";
-
-export interface Budget {
-  budgetId: number;
-  projectId: number;
-  budgetLimit: number;
-  currentSpend: number;
-  remainingBudget: number;
-}
-
-export interface Estimate {
-  estimateId: number;
-  projectId: number;
-  estimatedCost: number;
-  deadline: string;
-}
-
-export interface Project {
-  projectId: number;
-  name: string;
-  budget: number;
-  currentSpend: number;
-  startDate: string;
-  endDate: string;
-  budgets: Budget[];
-  estimates: Estimate[];
-}
+import { fetchProjects } from "../services/projectsService";
+import { fetchProjectBudgets } from "../services/projectBudgetsService";
+import { fetchProjectEstimates } from "../services/projectEstimatesService";
+import { Project } from "../types";
 
 const useProjects = () => {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -33,38 +11,29 @@ const useProjects = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchProjectsWithDetails = async () => {
       try {
         setLoading(true);
 
         // Fetch all projects
-        const projectResponse = await axios.get(
-          "https://flow-companion-backend.onrender.com/api/projects/get-all"
-        );
-        const projectsData = projectResponse.data;
+        const projectsData = await fetchProjects();
 
         // Fetch budgets and estimates for each project
         const projectsWithDetails = await Promise.all(
-          projectsData.map(async (project: Omit<Project, "budgets" | "estimates">) => {
+          projectsData.map(async (project) => {
             try {
-              const [budgetsResponse, estimatesResponse] = await Promise.all([
-                axios
-                  .get(`https://flow-companion-backend.onrender.com/api/budgets/project/${project.projectId}`)
-                  .then((res) => (Array.isArray(res.data) ? res.data : []))
-                  .catch(() => []), // Fallback to empty array if API fails
-                axios
-                  .get(`https://flow-companion-backend.onrender.com/api/estimates/project/${project.projectId}`)
-                  .then((res) => (Array.isArray(res.data) ? res.data : []))
-                  .catch(() => []), // Fallback to empty array if API fails
+              const [budgets, estimates] = await Promise.all([
+                fetchProjectBudgets(project.id),
+                fetchProjectEstimates(project.id),
               ]);
 
               return {
                 ...project,
-                budgets: budgetsResponse,
-                estimates: estimatesResponse,
+                budgets,
+                estimates,
               };
             } catch (innerErr) {
-              console.error(`Error fetching budgets/estimates for project ${project.projectId}:`, innerErr);
+              console.error(`Error fetching budgets/estimates for project ${project.id}:`, innerErr);
               return {
                 ...project,
                 budgets: [],
@@ -84,7 +53,7 @@ const useProjects = () => {
       }
     };
 
-    fetchProjects();
+    fetchProjectsWithDetails();
   }, []);
 
   return { projects, loading, error };

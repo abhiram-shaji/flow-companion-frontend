@@ -58,7 +58,7 @@ const ProjectOverview: React.FC = () => {
           !error &&
           projects.map((project) => (
             <ProjectAccordion
-              key={project.projectId}
+              key={project.id} // Updated from project.projectId to project.id
               project={project}
               expanded={expanded}
               handleAccordionChange={handleAccordionChange}
