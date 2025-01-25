@@ -17,7 +17,7 @@ import {
   Button,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import UpdateBudgetModal from "./UpdateBudgetModal";
+
 
 interface ProjectAccordionProps {
   project: any; // Replace 'any' with your project type
@@ -52,28 +52,11 @@ const ProjectAccordion: React.FC<ProjectAccordionProps> = ({ project, expanded, 
               <strong>End Date:</strong> {project.endDate}
             </Typography>
             <Typography>
-              <strong>Total Budget:</strong> ${project.budget}
+              <strong>Budget:</strong> ${project.budget}
             </Typography>
-            <Typography>
-              <strong>Current Spend:</strong> ${project.currentSpend}
-            </Typography>
+
           </CardContent>
         </Card>
-
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => setIsBudgetModalOpen(true)}
-        >
-          Update Budget
-        </Button>
-
-        <UpdateBudgetModal
-          open={isBudgetModalOpen}
-          onClose={() => setIsBudgetModalOpen(false)}
-          onSubmit={handleAddBudget}
-          projectId={project.projectId} // Pass projectId to fetch budget details
-        />
 
         <Typography variant="subtitle1" sx={{ marginTop: 2 }}>
           <strong>Estimates:</strong>
