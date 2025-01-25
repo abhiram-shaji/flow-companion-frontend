@@ -28,9 +28,9 @@ interface ProjectAccordionProps {
 const ProjectAccordion: React.FC<ProjectAccordionProps> = ({ project, expanded, handleAccordionChange }) => {
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
 
-  const handleAddBudget = (newBudget: any) => {
-    console.log("New Budget:", newBudget);
-    // Add logic to handle the new budget
+  const handleAddBudget = (updatedBudget: any) => {
+    console.log("Updated Budget:", updatedBudget);
+    // Add logic to update the parent state with the new budget
   };
 
   return (
@@ -60,7 +60,6 @@ const ProjectAccordion: React.FC<ProjectAccordionProps> = ({ project, expanded, 
           </CardContent>
         </Card>
 
-
         <Button
           variant="contained"
           color="primary"
@@ -73,6 +72,7 @@ const ProjectAccordion: React.FC<ProjectAccordionProps> = ({ project, expanded, 
           open={isBudgetModalOpen}
           onClose={() => setIsBudgetModalOpen(false)}
           onSubmit={handleAddBudget}
+          projectId={project.projectId} // Pass projectId to fetch budget details
         />
 
         <Typography variant="subtitle1" sx={{ marginTop: 2 }}>
